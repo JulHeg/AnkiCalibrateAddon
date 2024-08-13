@@ -9,10 +9,10 @@ from .confidence_stats import ConfidenceStatsDialog
 # Ensure the user files directory exists
 os.makedirs(os.path.join(os.path.dirname(os.path.realpath(__file__)), "user_files"), exist_ok=True)
 
-# Setup the review hooks and logic
+# Replace the "Show Answer" button with a slider
 setup_review_hooks()
 
-# Add a window to the toolbar to show the calibration chart
+# Add the Calibration window to the toolbar to show the calibration chart
 def printScores():
     dialog = ConfidenceStatsDialog(calibration_data_path=calibration_data_path)
     dialog.exec()
