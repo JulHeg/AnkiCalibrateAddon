@@ -163,8 +163,8 @@ class ConfidenceStatsDialog(QDialog):
         
         
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        chart_html_path = os.path.join(dir_path, "web", "chart.html")
-        d3_path = os.path.join(dir_path, "web", "d3_7.js")
+        chart_html_path = os.path.join(dir_path, "chart.html")
+        d3_path = os.path.join(dir_path, "d3_7.js")
         with open(chart_html_path, "r") as f:
             html_content = f.read()
             # web_view.load(QUrl.fromLocalFile(html_text))

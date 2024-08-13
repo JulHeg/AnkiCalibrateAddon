@@ -26,8 +26,7 @@ jobs:
 
     - name: Create directories and download d3.js
       run: |
-        mkdir -p src/web
-        curl -o src/web/d3_7.js https://cdn.jsdelivr.net/npm/d3@7
+        curl -o src/d3_7.js https://cdn.jsdelivr.net/npm/d3@7
 
     - name: Zip src folder
       run: |
