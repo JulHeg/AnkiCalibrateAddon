@@ -1,4 +1,4 @@
-name: Build and Zip
+name: Package .ankiaddon
 
 on:
   workflow_dispatch:

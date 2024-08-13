@@ -1,5 +1,5 @@
 import os
-from typing import Optional
+from typing import Optional, Tuple
 
 from aqt.qt import (
     QDialog,
@@ -14,17 +14,19 @@ import json
 import math
 import requests
 
-def wald_interval_simple_50(k, n, eps = 0.02):
-    """Returns a 50% Wald interval and clips to [eps, 1-eps]."""
+def wilson_interval_50(k: int, n: int, eps: float = 0.02) -> Tuple[float, float]:
+    """Returns a 50% Wilson score interval and clips to [eps, 1-eps]."""
     if n == 0:
         return (0.0, 1.0)
     
+    z = 0.67449  # For 50% confidence
     p_hat = k / n
-    z = 0.674 # For a 50% confidence level
-    se = math.sqrt(p_hat * (1 - p_hat) / n)
+    denominator = 1 + z**2 / n
+    center_adjusted_probability = (p_hat + z**2 / (2 * n)) / denominator
+    adjusted_standard_error = math.sqrt((p_hat * (1 - p_hat) + z**2 / (4 * n)) / n) / denominator
     
-    lower_bound = max(eps, p_hat - z * se)
-    upper_bound = min(1 - eps, p_hat + z * se)
+    lower_bound = max(eps, center_adjusted_probability - z * adjusted_standard_error)
+    upper_bound = min(1 - eps, center_adjusted_probability + z * adjusted_standard_error)
     
     return (lower_bound, upper_bound)
 
@@ -111,8 +113,8 @@ class ConfidenceStatsDialog(QDialog):
         bucket_averages = {}
         bucket_guess_count = {}
         bucket_correct_outcomes = {}
-        bucket_wald_lower = {}
-        bucket_wald_upper = {}
+        bucket_ci_lower = {}
+        bucket_ci_upper = {}
 
         for i in range(bucket_count):
             if len(bucket_outcomes[i]) == 0:
@@ -121,9 +123,9 @@ class ConfidenceStatsDialog(QDialog):
                 bucket_averages[i] = sum(bucket_outcomes[i]) / len(bucket_outcomes[i])
             bucket_guess_count[i] = len(bucket_outcomes[i])
             bucket_correct_outcomes[i] = sum(bucket_outcomes[i])
-            wald_lower, wald_upper = wald_interval_simple_50(bucket_correct_outcomes[i], bucket_guess_count[i])
-            bucket_wald_lower[i] = wald_lower
-            bucket_wald_upper[i] = wald_upper
+            ci_lower, ci_upper = wilson_interval_50(bucket_correct_outcomes[i], bucket_guess_count[i])
+            bucket_ci_lower[i] = ci_lower
+            bucket_ci_upper[i] = ci_upper
             # bucket_string += f"Bucket {i / bucket_count:%} - {(i + 1) / bucket_count:%}: {bucket_averages[i]:.3f}\n"
         
         total_guesses = sum([bucket_guess_count[i] for i in range(bucket_count)])
@@ -158,10 +160,6 @@ class ConfidenceStatsDialog(QDialog):
             else:
                 overconfidence_explanation += "overconfident. Try to be less sure of yourself!"
         
-
-
-        
-        
         dir_path = os.path.dirname(os.path.realpath(__file__))
         chart_html_path = os.path.join(dir_path, "chart.html")
         d3_path = os.path.join(dir_path, "d3_7.js")
@@ -184,8 +182,8 @@ class ConfidenceStatsDialog(QDialog):
         values = {
             "overconfidence": overconfidence_score,
             "averages": list(bucket_averages.values()),
-            "lower_ci": list(bucket_wald_lower.values()),
-            "upper_ci": list(bucket_wald_upper.values()),
+            "lower_ci": list(bucket_ci_lower.values()),
+            "upper_ci": list(bucket_ci_upper.values()),
             "average_correct": f"{average_correct:.1%}",
             "average_expected_correct": f"{average_expected_correct:.1%}",
             "brier_score": f"{brier_score:.1%}",
