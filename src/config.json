@@ -1,0 +1,5 @@
+{
+    "confidence_score_cutoff": 0.1,
+    "default_percentage": 85,
+    "slider_only": true
+}

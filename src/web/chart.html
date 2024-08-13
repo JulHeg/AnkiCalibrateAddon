@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        .axis path,
+        .axis line {
+            fill: none;
+            stroke: #000;
+            shape-rendering: crispEdges;
+        }
+        .line {
+            fill: none;
+            stroke: steelblue;
+            stroke-width: 2px;
+        }
+        .ideal-line {
+            fill: none;
+            stroke: green;
+            stroke-width: 2px;
+            stroke-dasharray: 5, 5;
+        }
+        .overconfidence-line {
+            fill: none;
+            stroke: red;
+            stroke-width: 2px;
+            stroke-dasharray: 5, 5;
+        }
+        .ci-line {
+            stroke: gray;
+            stroke-width: 1.5px;
+        }
+
+        .axis text {
+            font-size: 14px;
+        }
+
+        h1 {
+            font-size: 16px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 14px;
+            margin-bottom: 5px;
+        }
+
+    </style>
+</head>
+<body>
+    <div style="margin-left: 20px; margin-top: 25px; margin-bottom: 20px;">
+    <h1>
+        Calibration Statistics
+    </h1>
+    <p>
+        Based on <strong>{total_guesses}</strong> reviews of <strong>{unique_cards}</strong> unique cards.
+    </p>
+    <p>
+        Average expected accuracy: <strong>{average_expected_correct}</strong>. Actual accuracy: <strong>{average_correct}</strong>.
+    </p>
+    <p>
+        Your Brier score: <strong>{brier_score}</strong>.
+    </p>
+    <p>
+        <strong>{overconfidence_explanation}</strong>
+    </p>
+    </div>
+    <div id="chart" style="text-align: center;"></div>
+
+    <script>{d3_js}</script>
+    <script>
+        const averages = {averages};
+        const lower_ci = {lower_ci};
+        const upper_ci = {upper_ci};
+        const overconfidence = 1 - {overconfidence};
+    
+        const margin = {top: 20, right: 20, bottom: 50, left: 50},
+            width = 600 - margin.left - margin.right,
+            height = 550 - margin.top - margin.bottom;
+    
+        const x = d3.scaleBand()
+            .domain(d3.range(averages.length).map(i => i / 10 + 0.05))
+            .range([0, width])
+            .padding(0.1);
+    
+        const y = d3.scaleLinear()
+            .domain([0, 1])
+            .range([height, 0]);
+    
+        const xAxis = d3.axisBottom(x)
+            .tickFormat((d, i) => (i / 10 + 0.05).toFixed(2));
+        const yAxis = d3.axisLeft(y);
+    
+        const svg = d3.select("#chart").append("svg")
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
+            .append("g")
+            .attr("transform", `translate(${margin.left},${margin.top})`);
+    
+        // X Axis
+        svg.append("g")
+            .attr("class", "x axis")
+            .attr("transform", `translate(0,${height})`)
+            .call(xAxis)
+            .append("text")
+            .attr("fill", "#000")
+            .attr("x", width / 2)
+            .attr("y", 40)
+            .attr("text-anchor", "middle")
+            .text("Subjective confidence");
+    
+        // Y Axis
+        svg.append("g")
+            .attr("class", "y axis")
+            .call(yAxis)
+            .append("text")
+            .attr("fill", "#000")
+            .attr("transform", "rotate(-90)")
+            .attr("x", -height / 2)
+            .attr("y", -40)
+            .attr("text-anchor", "middle")
+            .text("Actual proportion correct");
+    
+        // Calibration bar chart
+        svg.selectAll(".bar")
+            .data(averages)
+            .enter().append("rect")
+            .attr("class", "bar")
+            .attr("x", (d, i) => x(i / 10 + 0.05))
+            .attr("y", d => y(d))
+            .attr("width", x.bandwidth())
+            .attr("height", d => height - y(d))
+            .attr("fill", "steelblue");
+
+        // Define a linear scale for the lines
+const xLinear = d3.scaleLinear()
+    .domain([0, 1])
+    .range([0, width]);
+
+// Ideal diagonal line (x = y)
+svg.append("line")
+    .attr("class", "ideal-line")
+    .attr("x1", xLinear(0))
+    .attr("y1", y(0))
+    .attr("x2", xLinear(1))
+    .attr("y2", y(1))
+    .style("stroke", "black")
+    .style("stroke-dasharray", "5,5");
+
+// Overconfidence line (y = overconfidence*(x - 0.5) + 0.5)
+svg.append("line")
+    .attr("class", "overconfidence-line")
+    .attr("x1", xLinear(0))
+    .attr("y1", y(0.5 - 0.5 * overconfidence))
+    .attr("x2", xLinear(1))
+    .attr("y2", y(0.5 + 0.5 * overconfidence))
+    .style("stroke", "red")
+    .style("stroke-dasharray", "5,5");
+
+    
+    
+        // Add confidence intervals
+        svg.selectAll(".ci-line")
+            .data(averages)
+            .enter().append("line")
+            .attr("class", "ci-line")
+            .attr("x1", (d, i) => x(i / 10 + 0.05) + x.bandwidth() / 2)
+            .attr("x2", (d, i) => x(i / 10 + 0.05) + x.bandwidth() / 2)
+            .attr("y1", (d, i) => y(lower_ci[i]))
+            .attr("y2", (d, i) => y(upper_ci[i]))
+            .style("stroke", "black");
+    </script>
+    
+</body>
+</html>
