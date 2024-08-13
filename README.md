@@ -15,7 +15,7 @@ Usually with Anki, you get shown the front of your flashcard, click "Show Answer
 
 Then you score yourself as usual. After doing this a few hundred times, you can check if your sense of your own knowledge is accurate. Go to the tools menu and click "Calibration":
 
-![View of the Calibration window](images/calibrationplot.png)
+![View of the Calibration window](images/calibrationplot.png | width=500)
 
 The chart displays how often you were actually correct, based on the confidence interval you selected: [0-9%], [10-19%], and so on, up to [90-100%]. It also includes a 50% confidence interval for each range. If you are calibrated, this should roughly follow the ideal diagonal marked in black. In red is an actual linear best fit. The difference in the two slopes is your overconfidence score. If you are perfectly calibrated this should be roughly 0. If it is larger, then you are overconfident. If it is lower, you are underconfident. The [Brier score](https://en.wikipedia.org/wiki/Brier_score) is another measure of how good you are at estimating your own accuracy. Less is better with 0% being the best.
 
