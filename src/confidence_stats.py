@@ -13,7 +13,6 @@ from aqt.theme import theme_manager
 
 import json
 import math
-import requests
 
 def wilson_interval_50(k: int, n: int, eps: float = 0.02) -> Tuple[float, float]:
     """Returns a 50% Wilson score interval and clips to make sure the  interval doesn't end up smaller than eps"""
@@ -165,17 +164,11 @@ class ConfidenceStatsDialog(QDialog):
             html_content = f.read()
             # web_view.load(QUrl.fromLocalFile(html_text))
 
-        # Beautiful dependency management to ensure d3 is actually there. It's downloaded in the bundling step for the .ankiaddon version
         if os.path.exists(d3_path):
             with open(d3_path, "r") as f:
                 d3_js = f.read()
         else:
-            URL = "https://cdn.jsdelivr.net/npm/d3@7"
-            r = requests.get(URL)
-            with open(d3_path, "w") as f:
-                f.write(r.text)
-            with open(d3_path, "r") as f:
-                d3_js = f.read()
+            return "This add-on needs d3.js to function. If you downloaded the code from Github manually, please put this this file in the same folder as the add-on: https://cdn.jsdelivr.net/npm/d3@7"
         
         values = {
             "overconfidence": overconfidence_score,
