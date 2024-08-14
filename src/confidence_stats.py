@@ -16,7 +16,7 @@ import math
 import requests
 
 def wilson_interval_50(k: int, n: int, eps: float = 0.02) -> Tuple[float, float]:
-    """Returns a 50% Wilson score interval and clips to [eps, 1-eps]."""
+    """Returns a 50% Wilson score interval and clips to make sure the  interval doesn't end up smaller than eps"""
     if n == 0:
         return (0.0, 1.0)
     
@@ -26,9 +26,9 @@ def wilson_interval_50(k: int, n: int, eps: float = 0.02) -> Tuple[float, float]
     center_adjusted_probability = (p_hat + z**2 / (2 * n)) / denominator
     adjusted_standard_error = math.sqrt((p_hat * (1 - p_hat) + z**2 / (4 * n)) / n) / denominator
     
-    lower_bound = max(eps, center_adjusted_probability - z * adjusted_standard_error)
-    upper_bound = min(1 - eps, center_adjusted_probability + z * adjusted_standard_error)
-    
+    lower_bound = min(1 - eps, center_adjusted_probability - z * adjusted_standard_error)
+    upper_bound = max(eps, center_adjusted_probability + z * adjusted_standard_error)
+
     return (lower_bound, upper_bound)
 
 class ConfidenceStatsDialog(QDialog):
