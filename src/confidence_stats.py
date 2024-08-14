@@ -168,7 +168,7 @@ class ConfidenceStatsDialog(QDialog):
             with open(d3_path, "r") as f:
                 d3_js = f.read()
         else:
-            return "This add-on needs d3.js to function. If you downloaded the code from Github manually, please put this this file in the same folder as the add-on: https://cdn.jsdelivr.net/npm/d3@7"
+            return "This add-on needs d3.js to function. If you downloaded the code from Github manually, please put this this file d3_7.js in the same folder as the add-on: https://cdn.jsdelivr.net/npm/d3@7"
         
         values = {
             "overconfidence": overconfidence_score,
