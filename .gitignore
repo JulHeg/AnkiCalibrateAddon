@@ -162,3 +162,4 @@ cython_debug/
 #.idea/
 src/web/d3_7.js
 Calibrate.ankiaddon
+move.bat

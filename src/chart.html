@@ -4,55 +4,100 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-        }
-        .axis path,
-        .axis line {
-            fill: none;
-            stroke: #000;
-            shape-rendering: crispEdges;
-        }
-        .line {
-            fill: none;
-            stroke: steelblue;
-            stroke-width: 2px;
-        }
-        .ideal-line {
-            fill: none;
-            stroke: green;
-            stroke-width: 2px;
-            stroke-dasharray: 5, 5;
-        }
-        .overconfidence-line {
-            fill: none;
-            stroke: red;
-            stroke-width: 2px;
-            stroke-dasharray: 5, 5;
-        }
-        .ci-line {
-            stroke: gray;
-            stroke-width: 1.5px;
-        }
+body {
+    font-family: Arial, sans-serif;
+    background-color: #fff;
+    color: #000;
+}
 
-        .axis text {
-            font-size: 14px;
-        }
+.axis path,
+.axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
 
-        h1 {
-            font-size: 16px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
+.line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 2px;
+}
 
-        p {
-            font-size: 14px;
-            margin-bottom: 5px;
-        }
+.ideal-line {
+    fill: none;
+    stroke: green;
+    stroke-width: 2px;
+    stroke-dasharray: 5, 5;
+}
+
+.overconfidence-line {
+    fill: none;
+    stroke: red;
+    stroke-width: 2px;
+    stroke-dasharray: 5, 5;
+}
+
+.ci-line {
+    stroke: gray;
+    stroke-width: 1.5px;
+}
+
+.axis text {
+    font-size: 14px;
+}
+
+h1 {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+p {
+    font-size: 14px;
+    margin-bottom: 5px;
+    padding-left: 10px; /* Added padding for left alignment */
+}
+
+/* Dark mode styles */
+body.dark-mode {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body.dark-mode .axis path,
+body.dark-mode .axis line {
+    stroke: #e0e0e0;
+}
+
+body.dark-mode .line {
+    stroke: lightsteelblue;
+}
+
+body.dark-mode .ideal-line {
+    stroke: lightgreen;
+}
+
+body.dark-mode .overconfidence-line {
+    stroke: lightcoral;
+}
+
+body.dark-mode .ci-line {
+    stroke: lightgray;
+}
+
+body.dark-mode h1,
+body.dark-mode p {
+    color: #e0e0e0;
+}
 
     </style>
 </head>
 <body>
+    <script>
+        if ({is_dark_mode}){
+            document.body.classList.toggle('dark-mode');
+        }
+        </script>
     <div style="margin-left: 20px; margin-top: 25px; margin-bottom: 20px;">
     <h1>
         Calibration Statistics
@@ -149,7 +194,7 @@ svg.append("line")
     .attr("y1", y(0))
     .attr("x2", xLinear(1))
     .attr("y2", y(1))
-    .style("stroke", "black")
+    .style("stroke", {is_dark_mode} ? "green" : "black")
     .style("stroke-dasharray", "5,5");
 
 // Overconfidence line (y = overconfidence*(x - 0.5) + 0.5)
@@ -173,7 +218,7 @@ svg.append("line")
             .attr("x2", (d, i) => x(i / 10 + 0.05) + x.bandwidth() / 2)
             .attr("y1", (d, i) => y(lower_ci[i]))
             .attr("y2", (d, i) => y(upper_ci[i]))
-            .style("stroke", "black");
+            .style("stroke", {is_dark_mode} ? "white" : "black");
     </script>
     
 </body>

@@ -1,6 +1,5 @@
 from aqt import QAction, mw
 from aqt.utils import qconnect
-from aqt import gui_hooks
 import os
 
 from .review_hooks import setup_review_hooks, calibration_data_path

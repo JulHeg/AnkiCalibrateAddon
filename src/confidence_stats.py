@@ -9,6 +9,7 @@ from aqt.qt import (
 from aqt.deckchooser import DeckChooser
 from aqt import mw
 import aqt
+from aqt.theme import theme_manager
 
 import json
 import math
@@ -75,8 +76,6 @@ class ConfidenceStatsDialog(QDialog):
 
         answers = [json.loads(line.strip()) for line in lines if line != ""]
 
-        brier_score = 0
-        card_ids = set()
 
         if deck_id is not None:
             # Filter by deck and its subdecks. I don't know how to do it more idiomatic :()
@@ -85,12 +84,6 @@ class ConfidenceStatsDialog(QDialog):
         if len(answers) == 0:
             return ""
 
-        for answer in answers:
-            ground_truth = 1 if answer["has_guessed_correctly"] else 0
-            brier_score += (answer["guessedProb"] / 100 - ground_truth) ** 2
-            card_ids.add(answer["card_id"])
-        brier_score /= len(answers)
-
         bucket_count = 10
         bucket_outcomes = {}
         for i in range(bucket_count):
@@ -98,6 +91,8 @@ class ConfidenceStatsDialog(QDialog):
 
         total_correct = 0
         total_expected_correct = 0
+        brier_score = 0
+        card_ids = set()
 
         for answer in answers:
             bucket = int(answer["guessedProb"] / 10)
@@ -106,7 +101,10 @@ class ConfidenceStatsDialog(QDialog):
             bucket_outcomes[bucket].append(ground_truth)
             total_correct += ground_truth
             total_expected_correct += answer["guessedProb"] / 100
+            brier_score += (answer["guessedProb"] / 100 - ground_truth) ** 2
+            card_ids.add(answer["card_id"])
         
+        brier_score /= len(answers)
         average_correct = total_correct / len(answers)
         average_expected_correct = total_expected_correct / len(answers)
 
@@ -190,7 +188,8 @@ class ConfidenceStatsDialog(QDialog):
             "total_guesses": total_guesses,
             "unique_cards": unique_cards,
             "d3_js": d3_js,
-            "overconfidence_explanation": overconfidence_explanation
+            "overconfidence_explanation": overconfidence_explanation,
+            "is_dark_mode": "true" if theme_manager.night_mode else "false",
         }
 
         for k, v in values.items():
