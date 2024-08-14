@@ -1,5 +1,7 @@
 import os
 from typing import Optional, Tuple
+import json
+import math
 
 from aqt.qt import (
     QDialog,
@@ -10,9 +12,6 @@ from aqt.deckchooser import DeckChooser
 from aqt import mw
 import aqt
 from aqt.theme import theme_manager
-
-import json
-import math
 
 def wilson_interval_50(k: int, n: int, eps: float = 0.02) -> Tuple[float, float]:
     """Returns a 50% Wilson score interval and clips to make sure the  interval doesn't end up smaller than eps"""
@@ -37,10 +36,8 @@ class ConfidenceStatsDialog(QDialog):
         super().__init__()
 
         self.calibration_data_path = calibration_data_path
-        self.form = aqt.forms.stats.Ui_Dialog()
         self.deckArea = aqt.QWidget()
 
-        # self.form.setupUi(self)
         self.deck_chooser = DeckChooser(
             mw,
             self.deckArea,
@@ -55,7 +52,7 @@ class ConfidenceStatsDialog(QDialog):
         top_box = QVBoxLayout()
         self.setWindowTitle("Calibration Statistics")
 
-        top_box.addWidget(self.web_view, stretch=20)  # Add the web view to the dialog
+        top_box.addWidget(self.web_view, stretch=20)
         top_box.addWidget(self.deckArea, stretch=1)
         self.setLayout(top_box)
 
@@ -77,9 +74,18 @@ class ConfidenceStatsDialog(QDialog):
 
 
         if deck_id is not None:
-            # Filter by deck and its subdecks. I don't know how to do it more idiomatic :()
-            deck_name = mw.col.decks.get(deck_id)['name']
-            answers = [answer for answer in answers if mw.col.decks.get(mw.col.get_card(answer["card_id"]).did)['name'].startswith(deck_name)]
+            # Filter by deck and its subdecks. I don't know how to do it more idiomatic :(
+            filter_deck_name = mw.col.decks.get(deck_id)['name']
+            answers_filtered = []
+            for answer in answers:
+                try:
+                    card = mw.col.get_card(answer["card_id"])
+                    card_deck = mw.col.decks.get(card.did)
+                    if card_deck['name'].startswith(filter_deck_name):
+                        answers_filtered.append(answer)
+                except:
+                    pass
+            answers = answers_filtered
         if len(answers) == 0:
             return ""
 
@@ -123,7 +129,6 @@ class ConfidenceStatsDialog(QDialog):
             ci_lower, ci_upper = wilson_interval_50(bucket_correct_outcomes[i], bucket_guess_count[i])
             bucket_ci_lower[i] = ci_lower
             bucket_ci_upper[i] = ci_upper
-            # bucket_string += f"Bucket {i / bucket_count:%} - {(i + 1) / bucket_count:%}: {bucket_averages[i]:.3f}\n"
         
         total_guesses = sum([bucket_guess_count[i] for i in range(bucket_count)])
         unique_cards = len(card_ids)
