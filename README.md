@@ -29,7 +29,7 @@ You can download the newest version of the add-on here: <https://github.com/JulH
 
 You can also copy into your addon folder [manually for developing](https://addon-docs.ankiweb.net/addon-folders.html). In this case you also need to download the sole dependency [d3.js](https://cdn.jsdelivr.net/npm/d3@7) and put it into the src folder. You can also automatically build the .ankiaddon file with this command:
     curl -o src/d3_7.js https://cdn.jsdelivr.net/npm/d3@7
-    zip -rj Calibrate.ankiaddon src/*
+    zip -rj calibrate.ankiaddon src/*
 
 ## Limitations
 This add-on only works for the desktop version of Anki, not for the web or smartphone app. The calibration data is only stored locally on your computer and not synced across devices. However, the Calibrate add-on does not interfere with Anki's normal functioning, so you can still study on your phone normally while using the add-on on your PC. This add-on was developed and tested with Anki version 24.06.3 and might not work with other versions.

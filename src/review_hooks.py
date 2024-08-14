@@ -7,6 +7,7 @@ from aqt.utils import tr
 from aqt.theme import theme_manager
 
 dir_path = os.path.dirname(os.path.realpath(__file__))
+os.makedirs(os.path.join(dir_path, "user_files"), exist_ok=True)
 calibration_data_path = os.path.join(dir_path, "user_files", "calibration_data.txt")
 
 # Configuration setup

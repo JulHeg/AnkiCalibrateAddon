@@ -5,9 +5,6 @@ import os
 from .review_hooks import setup_review_hooks, calibration_data_path
 from .confidence_stats import ConfidenceStatsDialog
 
-# Ensure the user files directory exists
-os.makedirs(os.path.join(os.path.dirname(os.path.realpath(__file__)), "user_files"), exist_ok=True)
-
 # Replace the "Show Answer" button with a slider
 setup_review_hooks()
 
