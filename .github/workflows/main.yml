@@ -30,7 +30,7 @@ jobs:
 
     - name: Zip src folder
       run: |
-        zip -rj Calibrate.ankiaddon src/*
+        zip -rj calibrate.ankiaddon src/*
 
     - name: Create GitHub Release
       id: create_release
@@ -47,8 +47,8 @@ jobs:
       uses: actions/upload-release-asset@v1
       with:
         upload_url: ${{ steps.create_release.outputs.upload_url }}
-        asset_path: Calibrate.ankiaddon
-        asset_name: Calibrate.ankiaddon
+        asset_path: calibrate.ankiaddon
+        asset_name: calibrate.ankiaddon
         asset_content_type: application/zip
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

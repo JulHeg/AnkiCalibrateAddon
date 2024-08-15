@@ -100,13 +100,13 @@ class ConfidenceStatsDialog(QDialog):
         card_ids = set()
 
         for answer in answers:
-            bucket = int(answer["guessedProb"] / 10)
+            bucket = int(answer["estimatedProb"] / 10)
             bucket = min(bucket, bucket_count - 1)
-            ground_truth = 1 if answer["has_guessed_correctly"] else 0
+            ground_truth = 1 if answer["has_estimated_correctly"] else 0
             bucket_outcomes[bucket].append(ground_truth)
             total_correct += ground_truth
-            total_expected_correct += answer["guessedProb"] / 100
-            brier_score += (answer["guessedProb"] / 100 - ground_truth) ** 2
+            total_expected_correct += answer["estimatedProb"] / 100
+            brier_score += (answer["estimatedProb"] / 100 - ground_truth) ** 2
             card_ids.add(answer["card_id"])
         
         brier_score /= len(answers)
@@ -114,7 +114,7 @@ class ConfidenceStatsDialog(QDialog):
         average_expected_correct = total_expected_correct / len(answers)
 
         bucket_averages = {}
-        bucket_guess_count = {}
+        bucket_estimate_count = {}
         bucket_correct_outcomes = {}
         bucket_ci_lower = {}
         bucket_ci_upper = {}
@@ -124,13 +124,13 @@ class ConfidenceStatsDialog(QDialog):
                 bucket_averages[i] = 0.5
             else:
                 bucket_averages[i] = sum(bucket_outcomes[i]) / len(bucket_outcomes[i])
-            bucket_guess_count[i] = len(bucket_outcomes[i])
+            bucket_estimate_count[i] = len(bucket_outcomes[i])
             bucket_correct_outcomes[i] = sum(bucket_outcomes[i])
-            ci_lower, ci_upper = wilson_interval_50(bucket_correct_outcomes[i], bucket_guess_count[i])
+            ci_lower, ci_upper = wilson_interval_50(bucket_correct_outcomes[i], bucket_estimate_count[i])
             bucket_ci_lower[i] = ci_lower
             bucket_ci_upper[i] = ci_upper
         
-        total_guesses = sum([bucket_guess_count[i] for i in range(bucket_count)])
+        total_estimates = sum([bucket_estimate_count[i] for i in range(bucket_count)])
         unique_cards = len(card_ids)
 
         # Metaculus' overconfidence score, see here for an explanation: https://manifold.markets/1941159478/why-does-metaculus-calculate-their
@@ -140,7 +140,7 @@ class ConfidenceStatsDialog(QDialog):
         sum_1 = 0
         sum_2 = 0
         for answer in answers:
-            probability_of_correct = answer["guessedProb"] / 100 if answer["has_guessed_correctly"] else 1 - answer["guessedProb"] / 100 # p(r_i) in the above link
+            probability_of_correct = answer["estimatedProb"] / 100 if answer["has_estimated_correctly"] else 1 - answer["estimatedProb"] / 100 # p(r_i) in the above link
             if probability_of_correct >= confidence_score_cutoff and 1 - probability_of_correct >= confidence_score_cutoff:
                 sum_1 += (probability_of_correct - 1) * (probability_of_correct - 1/2)
                 sum_2 += (probability_of_correct - 1/2) ** 2
@@ -183,7 +183,7 @@ class ConfidenceStatsDialog(QDialog):
             "average_correct": f"{average_correct:.1%}",
             "average_expected_correct": f"{average_expected_correct:.1%}",
             "brier_score": f"{brier_score:.1%}",
-            "total_guesses": total_guesses,
+            "total_estimates": total_estimates,
             "unique_cards": unique_cards,
             "d3_js": d3_js,
             "overconfidence_explanation": overconfidence_explanation,

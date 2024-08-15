@@ -68,21 +68,21 @@ def _showAnswerButton(self) -> None:
 
 
 def _onConfidence(self, val: None) -> None:
-    self.guessedProb = val or ""
+    self.estimatedProb = val or ""
     self._showAnswer()
 
 def _onTypedAnswer(self, val: None) -> None:
     self.typedAnswer = val or ""
-    self.bottom.web.evalWithCallback('(function() { return document.getElementById("confidenceSlider").value; })()', self._onGuessedProb)
+    self.bottom.web.evalWithCallback('(function() { return document.getElementById("confidenceSlider").value; })()', self._onestimatedProb)
 
 
 def review_Hook(reviewer, card, ease):
-    if hasattr(reviewer, 'guessedProb'):
-        guessed_correctly = ease >= 2
+    if hasattr(reviewer, 'estimatedProb'):
+        estimated_correctly = ease >= 2
         data_to_save = {
-            'guessedProb': int(reviewer.guessedProb),
+            'estimatedProb': int(reviewer.estimatedProb),
             'ease': ease,
-            'has_guessed_correctly': guessed_correctly,
+            'has_estimated_correctly': estimated_correctly,
             'timestamp': datetime.datetime.now().timestamp(),
             'card_id': card.id
         }
@@ -91,6 +91,6 @@ def review_Hook(reviewer, card, ease):
 
 def setup_review_hooks():
     Reviewer._showAnswerButton = _showAnswerButton
-    Reviewer._onGuessedProb = _onConfidence
+    Reviewer._onestimatedProb = _onConfidence
     Reviewer._onTypedAnswer = _onTypedAnswer
     gui_hooks.reviewer_did_answer_card.append(review_Hook)
