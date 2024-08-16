@@ -25,9 +25,10 @@ You can use this add-on to get a calibrated sense of accuracy on your personal f
 Also, this is the kind of add-on you might only want to try out for a change rather than permanently. To get a decently looking calibration chart you really only need a few hundred probability estimates. Depending on your Anki usage this might only take a couple of days.
 
 ## Installations
-You can download the newest version of the add-on here: <https://github.com/JulHeg/AnkiCalibrateAddon/releases/latest>. (This is still a bit work in progress and I'll also put it on the Anki website when done, TODO!)
 
-You can also copy the `scr` folder into your addon folder [manually, especially for developing](https://addon-docs.ankiweb.net/addon-folders.html). In this case, you also need to download the sole dependency [d3.js](https://cdn.jsdelivr.net/npm/d3@7) and put it into the folder too. You can also automatically build the .ankiaddon file with this command:
+The add-on code is *665919307* for installing [directly from Anki](https://docs.ankiweb.net/addons.html). Alternatively, the addon is available as a file here: <https://github.com/JulHeg/AnkiCalibrateAddon/releases/latest>.
+
+Especially for developing, you can also copy the `scr` folder [into your addon folder manually](https://addon-docs.ankiweb.net/addon-folders.html). In this case, you also need to download the sole dependency [d3.js](https://cdn.jsdelivr.net/npm/d3@7) and put it into the folder too. You can also automatically build the .ankiaddon file with this command:
     curl -o src/d3_7.js https://cdn.jsdelivr.net/npm/d3@7
     zip -rj calibrate.ankiaddon src/*
 

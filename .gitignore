@@ -161,5 +161,6 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 src/web/d3_7.js
+calibrate.ankiaddon
 Calibrate.ankiaddon
 move.bat
