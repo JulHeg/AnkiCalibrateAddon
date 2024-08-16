@@ -26,7 +26,7 @@ Also, this is the kind of add-on you might only want to try out for a change rat
 
 ## Installations
 
-The add-on code is *665919307* for installing [directly from Anki](https://docs.ankiweb.net/addons.html). Alternatively, the addon is available as a file here: <https://github.com/JulHeg/AnkiCalibrateAddon/releases/latest>.
+The add-on code is **665919307** for installing [directly from Anki](https://docs.ankiweb.net/addons.html). Alternatively, the addon is available as a file here: <https://github.com/JulHeg/AnkiCalibrateAddon/releases/latest>.
 
 Especially for developing, you can also copy the `scr` folder [into your addon folder manually](https://addon-docs.ankiweb.net/addon-folders.html). In this case, you also need to download the sole dependency [d3.js](https://cdn.jsdelivr.net/npm/d3@7) and put it into the folder too. You can also automatically build the .ankiaddon file with this command:
     curl -o src/d3_7.js https://cdn.jsdelivr.net/npm/d3@7
